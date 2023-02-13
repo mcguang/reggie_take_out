@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -185,6 +186,20 @@ public class DishController {
         }).collect(Collectors.toList());
 
         return R.success(dishDtoList);
+    }
+
+    @PostMapping("/status/{status}")
+    public R<String> stopSale(@PathVariable Integer status,@RequestParam List<Long> ids){
+        log.info("status = {},dishList = {}",status,ids.toString());
+        dishService.stopSaleById(status,ids);
+        return R.success("修改成功");
+    }
+
+    @DeleteMapping
+    public R<String> deleteDish(@RequestParam List<Long> ids){
+        log.info("need delete ids = {}",ids.toString());
+        dishService.deleteDishByID(ids);
+        return R.success("删除成功");
     }
 
 }

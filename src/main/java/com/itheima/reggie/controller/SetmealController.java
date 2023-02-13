@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,22 @@ public class SetmealController {
         setmealService.saveWithDish(setmealDto);
 
         return R.success("新增套餐成功");
+    }
+
+    /**
+     * 根据id获取单个套餐的详细信息，用于回填
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> getById(@PathVariable Long id){
+        SetmealDto setmealDto = new SetmealDto();
+        Setmeal setmeal = setmealService.getById(id);
+        BeanUtils.copyProperties(setmeal,setmealDto);
+
+        //需要补充Dto缺失的字段
+
+        return R.success(setmealDto);
     }
 
     /**
@@ -108,6 +125,12 @@ public class SetmealController {
 
         return R.success("套餐数据删除成功");
     }
+
+    /**
+     * 暂停售卖和开启售卖
+     * @param ids
+     * @return
+     */
 
     /**
      * 根据条件查询套餐数据

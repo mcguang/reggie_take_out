@@ -2,18 +2,22 @@ package com.itheima.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.itheima.reggie.common.CustomException;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.DishFlavor;
+import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.mapper.DishMapper;
 import com.itheima.reggie.service.DishFlavorService;
 import com.itheima.reggie.service.DishService;
+import com.itheima.reggie.service.SetmealDishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +28,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper,Dish> implements Dis
 
     @Autowired
     private DishFlavorService dishFlavorService;
+
+    @Autowired
+    private SetmealDishService setmealDishService;
 
     /**
      * 新增菜品，同时保存对应的口味数据
@@ -92,4 +99,49 @@ public class DishServiceImpl extends ServiceImpl<DishMapper,Dish> implements Dis
 
         dishFlavorService.saveBatch(flavors);
     }
+
+    //根据Id改变菜品的status，从而控制启售与停售
+    public void stopSaleById(Integer status, List<Long> ids) {
+        List<Dish> dishes = new ArrayList<>();
+        //注意有关联套餐的不能停售
+        for(Long id : ids){
+            LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper = new LambdaQueryWrapper();
+            lambdaQueryWrapper.eq(SetmealDish::getDishId,id);
+            lambdaQueryWrapper.eq(SetmealDish::getIsDeleted,0);
+            SetmealDish setmealDish = setmealDishService.getOne(lambdaQueryWrapper);
+            if(setmealDish != null) {
+                throw new CustomException("关联在售套餐的菜品不能停售");
+            }
+            Dish dish = new Dish();
+            dish.setId(id);
+            dish.setStatus(status);
+            dishes.add(dish);
+        }
+        this.updateBatchById(dishes);
+    }
+
+    //删除菜品，关联套餐抛出异常
+    @Transactional
+    public void deleteDishByID(List<Long> ids) {
+        //异常排除
+        for(Long id : ids){
+            LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(SetmealDish::getDishId,id);
+            lambdaQueryWrapper.eq(SetmealDish::getIsDeleted, 0);
+            SetmealDish setmealDish = setmealDishService.getOne(lambdaQueryWrapper);
+            if(setmealDish != null){
+                throw new CustomException("关联在售套餐的菜品不能删除");
+            }
+        }
+        //删除菜品
+        this.removeByIds(ids);
+
+        //删除菜品关联的口味
+        for(Long id : ids){
+            LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(DishFlavor::getDishId,id);
+            dishFlavorService.remove(lambdaQueryWrapper);
+        }
+    }
+
 }
