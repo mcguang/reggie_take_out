@@ -128,9 +128,17 @@ public class SetmealController {
 
     /**
      * 暂停售卖和开启售卖
+     * @param status
      * @param ids
      * @return
      */
+
+    @PostMapping("/status/{status}")
+    public R<String> changeStatus(@PathVariable Integer status,@RequestParam List<Long> ids){
+        setmealService.stopSaleById(status,ids);
+        return R.success("修改售卖状态成功");
+    }
+
 
     /**
      * 根据条件查询套餐数据

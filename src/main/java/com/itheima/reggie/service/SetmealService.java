@@ -18,4 +18,8 @@ public interface SetmealService extends IService<Setmeal> {
      * @param ids
      */
     public void removeWithDish(List<Long> ids);
+
+
+    //根据Id改变套餐的status，从而控制启售与停售
+    public void stopSaleById(Integer status, List<Long> ids);
 }

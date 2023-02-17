@@ -11,7 +11,7 @@ spring:
       username: root
       password: 123456
   redis:
-    host: localhost
+    host: 192.168.0.121
     port: 6379
     database: 0
 #    password:
@@ -29,4 +29,4 @@ logging:
     root: info
 
 reggie:
-  path: /Users/meicg/Downloads/java开发/瑞吉外卖-资料/1 瑞吉外卖项目/资料/图片资源/
+  path: D:\IdeaProjects\reggie_take_out\source\image\
