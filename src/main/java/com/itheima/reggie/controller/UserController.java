@@ -108,4 +108,18 @@ public class UserController {
         return R.error("登录失败");
     }
 
+
+    /**
+     * 移动端用户退出登录
+     * @param session
+     * @return
+     */
+    @PostMapping("/loginout")
+    public R<String> loginout(HttpSession session){
+        log.info("用户退出登录,用户id为：{}",session.getAttribute("user"));
+        session.removeAttribute("user");
+
+        return R.success("退出成功");
+    }
+
 }

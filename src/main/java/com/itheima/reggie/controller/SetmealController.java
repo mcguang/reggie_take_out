@@ -44,7 +44,7 @@ public class SetmealController {
      * @param setmealDto
      * @return
      */
-    @CacheEvict
+    @CacheEvict(value = "setmealCache",allEntries = true)  //完全清除所有的缓存
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info("套餐信息：{}",setmealDto);
@@ -120,7 +120,7 @@ public class SetmealController {
      * @param ids
      * @return
      */
-    @CacheEvict
+    @CacheEvict(value = "setmealCache",allEntries = true)  //完全清除所有的缓存
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids:{}",ids);
@@ -145,7 +145,7 @@ public class SetmealController {
 
 
     /**
-     * 根据条件查询套餐数据
+     * 根据条件查询套餐数据,用户端以此获取套餐数据
      * @param setmeal
      * @return
      */
