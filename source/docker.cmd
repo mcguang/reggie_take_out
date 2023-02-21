@@ -1,0 +1,3 @@
+docker run -p 3306:3306 -p 33060:33060 --name mysql_3306  -v D:\dockerData\mysql_3306\log:/var/log/mysql:rw  -v D:\dockerData\mysql_3306\mysql-files:/var/lib/mysql-files/   -v D:\dockerData\mysql_3306\conf\my.cnf:/etc/mysql/my.cnf:rw -v D:\dockerData\mysql_3306\data:/var/lib/mysql:rw -e MYSQL_ROOT_PASSWORD=123456 -d mysql:latest
+
+docker run -p 3307:3306 -p 33070:33060 --name mysql_3307 -v D:\dockerData\mysql_3307\log:/var/log/mysql:rw  -v D:\dockerData\mysql_3307\mysql-files:/var/lib/mysql-files/   -v D:\dockerData\mysql_3307\conf\my.cnf:/etc/mysql/my.cnf:rw -v D:\dockerData\mysql_3307\data:/var/lib/mysql:rw -e MYSQL_ROOT_PASSWORD=123456 -d mysql:latest
